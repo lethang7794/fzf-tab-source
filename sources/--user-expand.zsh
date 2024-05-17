@@ -1,2 +1,2 @@
 # :fzf-tab:user-expand::
-less $word
+less -- $word

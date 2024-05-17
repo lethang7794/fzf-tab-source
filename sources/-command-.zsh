@@ -2,7 +2,7 @@
 case $group in
 'external command')
   if bash -c "tldr $word" 2>/dev/null; then
-    eval "tldr $word"
+    eval "tldr --color $word"
   elif bash -c "$word --help" 2>/dev/null; then
     eval "$word --help" | bat -pl help
   elif bash -c "$word -h" 2>/dev/null; then
