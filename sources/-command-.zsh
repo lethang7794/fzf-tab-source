@@ -33,8 +33,9 @@ alias)
   ;;
 'shell function')
   # Print default zsh shell functions
-  if [ -f "/usr/share/zsh/$ZSH_VERSION/functions/$word" ]; then
-    bat -lman "/usr/share/zsh/$ZSH_VERSION/functions/$word"
+  func="/usr/share/zsh/$ZSH_VERSION/functions/$word"
+  if [ -f $func ]; then
+    bat -lman <(echo "# $func") $func
   fi
   ;;
 esac
