@@ -31,6 +31,9 @@ parameter)
 alias)
   # type $word
   ;;
+'reserved word')
+  info bash Indexes "Reserved Word Index" | grep "* $word:" | awk '{print $2,$3}'
+  ;;
 'shell function')
   # Print default zsh shell functions
   func="/usr/share/zsh/$ZSH_VERSION/functions/$word"
