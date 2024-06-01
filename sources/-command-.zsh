@@ -2,27 +2,30 @@
 case $group in
 'external command')
   if bash -c "tldr $word" 1>/dev/null 2>&1; then
-    eval "tldr --color=always $word"
+    cat <(echo "\$ tldr $word") <(eval "tldr --color=always $word")
   elif bash -c "$word --help" 1>/dev/null 2>&1; then
-    eval "$word --help" | bat -pl help
+    bat -pl help <(echo "\$ $word --help") <(eval "$word --help")
   elif bash -c "$word -h" 1>/dev/null 2>&1; then
-    eval "$word -h" | bat -pl help
+    bat -pl help <(echo "\$ $word -h") <(eval "$word -h")
+    # eval "$word -h" | bat -pl help
   elif bash -c "$word help" 1>/dev/null 2>&1; then
-    eval "$word help" | bat -pl help
+    bat -pl help <(echo "\$ $word help") <(eval "$word help")
+    # eval "$word help" | bat -pl help
   else
-    man $word 2>/dev/null | bat -lman
+    bat -lman <(echo \$ man $word) <(man $word 2>/dev/null)
   fi
   ;;
 'executable file')
   less ${realpath#--*=}
   ;;
 'builtin command')
-  if [ -f "/usr/share/zsh/$ZSH_VERSION/help/$word" ]; then
-    bat -lman "/usr/share/zsh/$ZSH_VERSION/help/$word"
+  cmd="/usr/share/zsh/$ZSH_VERSION/help/$word"
+  if [ -f $cmd ]; then
+    bat -lman <(echo "# $cmd") $cmd
   elif bash -c "help $word" 1>/dev/null 2>&1; then
-    bash -c "help $word" | bat -lman
+    bat <(echo \$ help $word) <(bash -c "help $word")
   else
-    run-help $word | bat -lman
+    bat -lman <(echo \$ man $word) <(run-help $word)
   fi
   ;;
 parameter)
