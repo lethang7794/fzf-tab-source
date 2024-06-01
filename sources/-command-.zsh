@@ -10,14 +10,20 @@ case $group in
   elif bash -c "$word help" >>/dev/null 2>&1; then
     eval "$word help" | bat -pl help
   else
-    run-help $word | bat -lman
+    man $word 2>/dev/null | bat -lman
   fi
   ;;
 'executable file')
   less ${realpath#--*=}
   ;;
 'builtin command')
-  run-help $word | bat -lman
+  if [ -f "/usr/share/zsh/$ZSH_VERSION/help/$word" ]; then
+    bat -lman "/usr/share/zsh/$ZSH_VERSION/help/$word"
+  elif bash -c "help $word" 1>/dev/null 2>&1; then
+    bash -c "help $word" | bat -lman
+  else
+    run-help $word | bat -lman
+  fi
   ;;
 parameter)
   echo ${(P)word}
