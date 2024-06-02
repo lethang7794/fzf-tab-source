@@ -36,7 +36,7 @@ alias)
   ;;
 'reserved word')
   rw=$(info bash Indexes "Reserved Word Index" | grep "* $word:" | awk '{print $2,$3}')
-  echo $rw "\n\nSee https://www.gnu.org/software/bash/manual/html_node/Reserved-Word-Index.html#Reserved-Word-Index_rw_symbol-2"
+  bat <(echo $rw "\n") <(bash -c "help $word" 2>/dev/null) <(echo "\nSee https://www.gnu.org/software/bash/manual/html_node/Reserved-Word-Index.html#Reserved-Word-Index_rw_symbol-2")
   ;;
 'shell function')
   # Print default zsh shell functions
