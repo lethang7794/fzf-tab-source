@@ -4,6 +4,10 @@ case $group in
   less ${realpath#--*=}
   ;;
 *)
-  git diff --color $realpath
+  if [ "$(command -v delta)" ]; then
+    git diff $realpath | delta --diff-so-fancy
+  else
+    git diff --color $realpath
+  fi
   ;;
 esac
