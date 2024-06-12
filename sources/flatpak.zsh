@@ -1,6 +1,13 @@
 # :fzf-tab:complete:(\\|*/|)flatpak:
-case $group in
-argument)
+# echo $word $group $realpath
+# case $group in
+# argument)
+#   flatpak $word --help
+#   ;;
+# esac
+
+if [[ "${word}" == *"."* ]]; then
+  flatpak info $word | bat -pl yaml
+else
   flatpak $word --help
-  ;;
-esac
+fi
