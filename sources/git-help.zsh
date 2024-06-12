@@ -8,5 +8,8 @@ if bash -c "tldr git $word" >>/dev/null 2>&1; then
   tldr --color=always git $word | tail -n +3
 fi
 
+echo "$ ${bold}git $word -h"
+git $word -h | bat -lhelp
+
 echo "$ ${bold}git help $word"
 git help $word | bat -lhelp
