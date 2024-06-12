@@ -1,16 +1,20 @@
 # :fzf-tab:complete:(-command-:|command:option-(v|V)-rest)
+
 case $group in
 'external command')
   if bash -c "tldr $word" 1>/dev/null 2>&1; then
-    cat <(echo "\$ tldr $word") <(eval "tldr --color=always $word")
-  elif bash -c "$word --help" 1>/dev/null 2>&1; then
-    bat -pl help <(echo "\$ $word --help") <(eval "$word --help")
+    echo "\$ tldr $word"
+    cat <(eval "tldr --color=always --quiet $word | tail -n +3")
+  fi
+  if bash -c "$word --help" 1>/dev/null 2>&1; then
+    echo "\$ $word --help"
+    bat -pl help <(eval "$word --help")
   elif bash -c "$word -h" 1>/dev/null 2>&1; then
-    bat -pl help <(echo "\$ $word -h") <(eval "$word -h")
-    # eval "$word -h" | bat -pl help
+    echo "\$ $word -h"
+    bat -pl help  <(eval "$word -h")
   elif bash -c "$word help" 1>/dev/null 2>&1; then
-    bat -pl help <(echo "\$ $word help") <(eval "$word help")
-    # eval "$word help" | bat -pl help
+    echo "\$ $word help"
+    bat -pl help <(eval "$word help")
   else
     bat -lman <(echo \$ man $word) <(man $word 2>/dev/null)
   fi
@@ -36,7 +40,8 @@ alias)
   ;;
 'reserved word')
   rw=$(info bash Indexes "Reserved Word Index" | grep "* $word:" | awk '{print $2,$3}')
-  bat <(echo $rw "\n") <(bash -c "help $word" 2>/dev/null) <(echo "\nSee https://www.gnu.org/software/bash/manual/html_node/Reserved-Word-Index.html#Reserved-Word-Index_rw_symbol-2")
+  bat <(echo $rw "\n") <(bash -c "help $word" 2>/dev/null) 
+  echo "\nSee https://www.gnu.org/software/bash/manual/html_node/Reserved-Word-Index.html#Reserved-Word-Index_rw_symbol-2"
   ;;
 'shell function')
   # Print default zsh shell functions
