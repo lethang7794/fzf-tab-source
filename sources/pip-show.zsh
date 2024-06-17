@@ -1,2 +1,4 @@
-# :fzf-tab:complete:(\\|*/|)pip(|3*):argument-rest
+# :fzf-tab:complete:(\\|*/|)pip-:*
+
+echo \$ pip show $word
 pip show $word | bat -lyaml
