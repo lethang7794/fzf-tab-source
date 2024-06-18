@@ -25,7 +25,7 @@ function () {
         break
       fi
     done < $src
-    zstyle $ctx fzf-preview "src="\""$src"\"" . "\""$dir"\""/functions/main.zsh"
+    zstyle $ctx fzf-preview "src="\""$src"\"" ctx="\""$ctx"\"" . "\""$dir"\""/functions/main.zsh"
     flags=${arr[2]}
     if [[ -n $flags ]]; then
       zstyle $ctx fzf-flags $flags
