@@ -10,10 +10,10 @@ if [[ $group == "repositories" ]]; then
   fi
 elif [[ $group == "repositories with tags" ]]; then
   echo \$ docker image inspect $word
-  docker image inspect $word | bat -pl json
+  docker image inspect $word | jq --color-output
 elif [[ $group == "images" ]]; then
   echo \$ docker image inspect $word
-  docker image inspect $word | bat -pl json
+  docker image inspect $word | jq --color-output
 else
   debug
 fi

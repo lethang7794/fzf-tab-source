@@ -13,10 +13,10 @@ elif [[ $group == "repositories" ]]; then
   fi
 elif [[ $group == "images" ]]; then
   echo \$ docker image inspect $word
-  docker image inspect $word | bat -pl json
+  docker image inspect $word | jq --color-output
 elif [[ $words == "docker container inspect " ]]; then
   echo \$ docker container inspect $word
-  docker container inspect $word | bat -pl json
+  docker container inspect $word | jq --color-output
 elif [[ $words == "docker container logs " ]]; then
   echo \$ docker container logs $word
   docker container logs $word | bat -pl log
