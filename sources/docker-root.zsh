@@ -1,5 +1,5 @@
-# :fzf-tab:complete:((\\|*/|)docker|docker-help):argument-1
-echo ':fzf-tab:complete:((\\|*/|)docker|docker-help):argument-1'
+# :fzf-tab:complete:((\\|*/|)docker):argument-1
+echo ':fzf-tab:complete:((\\|*/|)docker):argument-1'
 
 if bash -c "tldr docker $word" >>/dev/null 2>&1; then
   echo "$ tldr docker $word"
@@ -10,3 +10,6 @@ if bash -c "docker help $word" >>/dev/null 2>&1; then
   echo "$ docker help $word"
   docker help $word | bat -lhelp
 fi
+
+echo \$ man docker-$word
+man docker-$word 2>/dev/null | bat -lman
