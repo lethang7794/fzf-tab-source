@@ -10,5 +10,5 @@ if [[ "${group}" == "containers" ]]; then
     echo $diff
   fi
 else
-  fzf-tab-source-debug
+  debug
 fi

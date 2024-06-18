@@ -15,5 +15,5 @@ elif [[ $group == "images" ]]; then
   echo \$ docker image inspect $word
   docker image inspect $word | bat -pl json
 else
-  fzf-tab-source-debug
+  debug
 fi

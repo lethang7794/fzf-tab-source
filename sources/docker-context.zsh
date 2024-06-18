@@ -11,4 +11,4 @@ if bash -c "docker context $word --help" >>/dev/null 2>&1; then
   docker context $word --help | bat -lhelp
 fi
 
-fzf-tab-source-debug
+debug

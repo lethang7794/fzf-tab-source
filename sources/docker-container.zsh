@@ -12,9 +12,9 @@ if [[ $group == "docker container command" ]]; then
   docker container $word --help
 
 elif [[ $group == "container" ]]; then
-  fzf-tab-source-debug
+  debug
 elif [[ $group == "old name" ]]; then
-  fzf-tab-source-debug
+  debug
 else
-  fzf-tab-source-debug
+  debug
 fi

@@ -21,5 +21,5 @@ elif [[ $words == "docker container logs " ]]; then
   echo \$ docker container logs $word
   docker container logs $word | bat -pl log
 else
-  fzf-tab-source-debug
+  debug
 fi

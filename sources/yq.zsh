@@ -7,5 +7,5 @@ elif [[ $group == "completions" ]]; then
   echo \$ yq $word --help
   yq $word --help
 else
-  fzf-tab-source-debug
+  debug
 fi

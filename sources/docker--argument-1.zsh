@@ -41,5 +41,5 @@ elif [[ $group == "context" ]]; then
   docker context inspect $word | bat -pl json
 
 else
-  fzf-tab-source-debug
+  debug
 fi
