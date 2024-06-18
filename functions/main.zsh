@@ -37,4 +37,19 @@ tmp_dir=${TMPPREFIX:-/tmp/zsh}-fzf-tab-$USER
 export CLICOLOR_FORCE=1
 export SYSTEMD_COLORS=1
 
+# Call fzf-tab-source-debug in source file to get debug information
+function fzf-tab-source-debug {
+  echo $0:
+  echo -------------
+  echo "src:      |$src|" 
+  echo "desc:     |$desc|"
+  echo "word:     |$word|"
+  echo "group:    |$group|"
+  echo "realpath: |$realpath|"
+  echo "words:    |$words|"
+  echo "-------------"
+  echo "For more information, see https://github.com/Aloxaf/fzf-tab/wiki/Preview"
+  echo
+}
+
 . $src
