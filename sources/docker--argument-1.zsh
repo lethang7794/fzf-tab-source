@@ -32,6 +32,10 @@ elif [[ $group == "images" ]]; then
   echo \$ docker image inspect $word
   docker image inspect $word | bat -pl json
 
+elif [[ $group == "containers" ]]; then
+  echo \$ docker container inspect $word
+  docker container inspect $word | bat -pl json
+
 elif [[ $group == "context" ]]; then
   echo \$ docker context inspect $word
   docker context inspect $word | bat -pl json
