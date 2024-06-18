@@ -1,2 +1,4 @@
-# :fzf-tab:complete:((\\|*/|)docker|docker-help):argument-1
-docker help $word | bat -lhelp
+# :fzf-tab:complete:docker:*
+echo ':fzf-tab:complete:docker:*'
+
+fzf-tab-source-debug
