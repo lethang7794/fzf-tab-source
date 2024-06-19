@@ -1,5 +1,10 @@
 # :fzf-tab:complete:((\\|*/|)docker):argument-1
 
+# Skip the options
+if [[ "$desc" =~ ^"-" ]]; then
+  return
+fi
+
 if bash -c "tldr docker $word" >/dev/null 2>&1; then
   echo "$ tldr docker $word"
   tldr --color=always docker $word | tail -n +3
