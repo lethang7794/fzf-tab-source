@@ -50,6 +50,43 @@ elif [[ $words =~ "podman container" ]]; then
     debug
   fi
 
+elif [[ $words == "podman image " ]]; then
+  if bash -c "tldr podman image $word" >/dev/null 2>&1; then
+    echo "$ tldr podman image $word"
+    tldr --color=always podman image $word | tail -n +3
+  fi
+
+  if bash -c "podman image $word --help" >/dev/null 2>&1; then
+    echo "$ podman image $word --help"
+    podman image $word --help | bat -lhelp
+  fi
+
+  echo \$ man podman-image-$word
+  man podman-image-$word 2>/dev/null | bat -lman
+
+elif [[ $words =~ "podman image" ]]; then
+  debug
+  if [[ $words =~ "trust" ]]; then
+    if bash -c "podman image trust $word --help" >/dev/null 2>&1; then
+      echo "$ podman image trust $word --help"
+      podman image trust $word --help | bat -lhelp
+    fi
+
+    echo \$ man podman-image trust-$word
+    man podman-image trust-$word 2>/dev/null | bat -lman
+
+  elif [[ $word =~ "build|diff|history|import|list|load|mount|prune|pull|push|rm|save|scp|search|sign|tag|trust|unmount|untag" ]]; then
+    echo "$ podman image inspect $word"
+  elif [[ $word =~ "exists|inspect" ]]; then
+    echo "$ $words$word"
+    $words$word | jq --color-output
+  elif [[ $word =~ "tree" ]]; then
+    echo "$ $words$word"
+    $words$word | bat -l yaml
+  else
+    debug
+  fi
+
 else
   debug
 fi
