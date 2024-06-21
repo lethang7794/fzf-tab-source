@@ -57,12 +57,31 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
   if [[ $words =~ "annotate|delete|edit|get|describe|expose|label|patch" ]]; then
 
-    echo "$ kubectl get $word " | bat -l bash
-    kubectl get $word | bat -l bash
+    [[ $word =~ "/" ]] && local isResource=true || local isResourceType=true
 
-    echo
-    echo "$ kubectl explain $word " | bat -l bash
-    parse_kubectl_explain $word | bat -l yaml
+    if [ $isResourceType ]; then
+      echo "$ kubectl get $word " | bat -l bash
+      kubectl get $word | bat -l bash
+      echo
+      echo "$ kubectl explain $word " | bat -l bash
+      parse_kubectl_explain $word | bat -l yaml
+    fi
+
+    if [ $isResource ]; then
+      local type="${word%/*}"
+
+      echo "$ kubectl get $word -o wide" | bat -l bash
+      kubectl get $word -o wide | bat -l bash
+      echo
+      echo "$ kubectl explain $type" | bat -l bash
+      kubectl explain $type | bat -l yaml
+
+      echo "$ kubectl get $word -o yaml" | bat -l bash
+      kubectl get $word -o yaml | bat -l yaml
+      echo
+      echo "$ kubectl describe $word" | bat -l bash
+      kubectl describe $word | bat -l yaml
+    fi
 
   fi
 
@@ -144,6 +163,18 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
   fi
 
+  if [[ $words =~ "apply" ]]; then
+
+    if bash -c "kubectl apply $word --help" >/dev/null 2>&1; then
+      echo "$ kubectl apply $word --help" | bat -l bash
+      kubectl apply $word --help | bat -lhelp
+    fi
+
+    printf "\n\$ man kubectl-apply-%q\n" $word
+    man kubectl-apply-$word | bat -lman
+
+  fi
+
   if [[ $words =~ "rollout" ]]; then
 
     if bash -c "kubectl rollout $word --help" >/dev/null 2>&1; then
@@ -202,7 +233,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
   if [[ $words =~ " set " ]]; then
 
     if bash -c "kubectl set $word --help" >/dev/null 2>&1; then
-      echo "\$ kubectl set $word --help" | bat -l bash
+      echo "$ kubectl set $word --help" | bat -l bash
       kubectl set $word --help | bat -lhelp
     fi
 
@@ -250,34 +281,60 @@ if [[ $level -eq 3 ]] && [[ $group = "completions" ]]; then
     fi
   fi
 
-  if [[ $words =~ " describe " ]]; then
-    # Remove trailing input
-    local prefix="${words% *}"
-    local prefixGet=$(echo $prefix | sed 's/describe/get/g')
+  if [[ $words =~ " (annotate|delete|edit|get|describe|expose|label|patch) " ]]; then
+    local resourceType=$(echo $words | awk '{print $3}')
+    echo resourceType: $resourceType
 
-    echo "\$ $prefixGet $word -o wide" | bat -l bash
-    eval "$prefixGet $word -o wide" | bat -l bash
+    echo "$ kubectl get $resourceType $word -o wide"
+    kubectl get $resourceType $word -o wide | bat -l bash
+
     echo
-    echo "\$ $prefix $word" | bat -l bash
-    eval "$prefix $word" | bat -l yaml
+    echo "$ kubectl explain $resourceType" | bat -l bash
+    kubectl explain $resourceType | bat -l yaml
+
+    echo
+    echo "$ kubectl get $resourceType $word -o yaml"
+    kubectl get $resourceType $word -o yaml | bat -l yaml
+
+    echo
+    echo "$ kubectl describe $resourceType $word"
+    kubectl describe $resourceType $word | bat -l yaml
   fi
 
-  if [[ $words =~ " get " ]]; then
-    # Remove trailing input
-    local prefix="${words% *}"
-    local prefixDescribe=$(echo $prefix | sed 's/get/describe/g')
-    local prefixExplain=$(echo $prefix | sed 's/get/explain/g')
+  if [[ $words =~ " apply " ]]; then
 
-    echo "\$ $prefix $word -o wide" | bat -l bash
-    eval "$prefix $word -o wide" | bat -l bash
-    echo
-    echo "\$ $prefixExplain" | bat -l bash
-    eval "$prefixExplain" | bat -l yaml
-    echo "\$ $prefix $word -o yaml" | bat -l bash
-    eval "$prefix $word -o yaml" | bat -l yaml
-    echo
-    echo "\$ $prefixDescribe $word" | bat -l bash
-    eval "$prefixDescribe $word" | bat -l yaml
+    local isResource isResourceType resourceType resource
+    if [[ $word =~ "/" ]]; then
+      isResource="true"
+      resourceType=$(echo $word | awk -F'/' '{print $1}')
+      resource=$(echo $word | awk -F'/' '{print $2}')
+    else
+      isResourceType=true
+      resourceType=$word
+    fi
+
+    if [ $isResourceType ]; then
+      echo "$ kubectl get $resourceType" | bat -l bash
+      kubectl get $resourceType | bat -l bash
+      echo
+      echo "$ kubectl explain $resourceType" | bat -l bash
+      parse_kubectl_explain $resourceType | bat -l yaml
+    else
+      echo "$ kubectl get $resourceType $resource -o wide" | bat -l bash
+      kubectl get $resourceType $resource -o wide | bat -l bash
+
+      echo
+      echo "$ kubectl apply view-last-applied $resourceType $resource" | bat -l bash
+      kubectl apply view-last-applied $resourceType $resource | bat -l yaml
+
+      echo
+      echo "$ kubectl explain $resourceType" | bat -l bash
+      kubectl explain $resourceType | bat -l yaml
+
+      echo "$ kubectl get $resourceType $resource -o yaml"
+      kubectl get $resourceType $resource -o yaml | bat -l yaml
+    fi
+
   fi
 
   if [[ $words =~ " taint node " ]]; then
@@ -293,4 +350,21 @@ if [[ $level -eq 3 ]] && [[ $group = "completions" ]]; then
     kubectl explain node | bat -l help
   fi
 
+fi
+
+if [[ $level -eq 4 ]] && [[ $group = "completions" ]]; then
+  if [[ "$words" =~ " apply " ]]; then
+    local resourceType=$(echo $words | awk '{print $4}')
+
+    echo "$ kubectl get $resourceType $word -o wide"
+    kubectl get $resourceType $word -o wide | bat -l bash
+
+    echo
+    echo "$ kubectl apply view-last-applied $resourceType $word"
+    kubectl apply view-last-applied $resourceType $word | bat -l yaml
+
+    echo
+    echo "$ kubectl get $resourceType $word -o yaml"
+    kubectl get $resourceType $word -o yaml | bat -l yaml
+  fi
 fi
