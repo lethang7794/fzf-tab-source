@@ -72,39 +72,64 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
     kubectl get nodes/$word | bat -l bash
 
     echo
-    echo "$ kubectl describe nodes/$word "
+    echo "$ kubectl describe nodes/$word"
     kubectl describe nodes/$word | bat -l yaml
 
     echo
-    echo "$ kubectl explain node "
+    echo "$ kubectl explain node"
     kubectl explain node | bat -l help
 
   fi
 
-  if [[ $words =~ "logs" ]]; then
-    local type=${word::-1}
+  if [[ $words =~ "attach|port-forward|logs" ]]; then
+    # An item with a trailing slash / is a resource type, e.g. pods, deamonsets, deployments
+    # An item without a trailing slash is a pod name, e.g. etcd-minikube, storage-provisioner, coredns-7db6d8ff4d-ng729, kube-proxy-7c4vr
 
-    echo "$ kubectl get $type "
-    kubectl get $type | bat -l bash
-
-    echo
-    echo "$ kubectl explain $type "
-    parse_kubectl_explain $type | bat -l help
-  fi
-
-  if [[ $words =~ "attach|port-forward" ]]; then
-    local type=${word}
-    if [[ $word =~ "/" ]]; then
-      local type=${word::-1}
-      echo "$ kubectl get $type " | bat -l bash
-      kubectl get $type | yq --colors
-
-      echo
-      echo "$ kubectl explain $type " | bat -l bash
-      kubectl explain $type | bat -l help
-      kubectl describe pod $type | bat -l yaml
+    local item=$(echo $word | sed -Ee 's/:|\///g')
+    if [[ ! $words =~ "/" ]] && [[ ! $word =~ "/" ]]; then
+      local isPod=true
+    elif [[ ! $words =~ "/" ]] && [[ $word =~ "/" ]]; then
+      local isResourceType=true
+    elif [[ $words =~ "/" ]] && [[ $word =~ "/" ]]; then
+      local isResource=true
     fi
 
+    if [ $isPod ]; then
+      echo "$ kubectl get pods $item -o wide" | bat -l bash
+      kubectl get pods $item -o wide | bat -l bash
+
+      echo
+      echo "$ kubectl explain pods" | bat -l bash
+      parse_kubectl_explain pods | bat -l help
+
+      echo "$ kubectl describe pods $item"
+      kubectl describe pods $item | bat -l bash
+    fi
+
+    if [ $isResourceType ]; then
+      echo "$ kubectl get $item" | bat -l bash
+      kubectl get $item | bat -l bash
+
+      echo
+      echo "$ kubectl explain $item"
+      parse_kubectl_explain $item | bat -l help
+    fi
+
+    if [ $isResource ]; then
+      # Remove trailing input
+      local prefix="${words% *}"
+      local resourceType="${word%%/*}"
+
+      echo "$ kubectl get $word -o wide" | bat -l bash
+      kubectl get $word -o wide | bat -l bash
+
+      echo
+      echo "$ kubectl explain $resourceType" | bat -l bash
+      parse_kubectl_explain $resourceType | bat -l help
+
+      echo "$ kubectl describe $word" | bat -l bash
+      kubectl describe $word | bat -l bash
+    fi
   fi
 
   if [[ $words =~ "certificate" ]]; then
@@ -174,7 +199,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
   fi
 
-  if [[ $words =~ "set" ]]; then
+  if [[ $words =~ " set " ]]; then
 
     if bash -c "kubectl set $word --help" >/dev/null 2>&1; then
       echo "\$ kubectl set $word --help" | bat -l bash
@@ -187,9 +212,9 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
   fi
 
   if [[ $words =~ "cp" ]]; then
-    item=$(echo $word | sed -Ee 's/:|\///g')
-    [[ $word =~ ":" ]] && isPod=true
-    [[ $word =~ "/" ]] && isNamespace=true
+    local item=$(echo $word | sed -Ee 's/:|\///g')
+    [[ $word =~ ":" ]] && local isPod=true
+    [[ $word =~ "/" ]] && local isNamespace=true
 
     if [ $isPod ] && [ $isNamespace ]; then
       // TODO: parse "namespace/pod:" and show the pod information
