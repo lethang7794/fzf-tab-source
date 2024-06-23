@@ -23,9 +23,19 @@ case $group in
   less ${realpath#--*=}
   ;;
 'builtin command')
-  cmd="/usr/share/zsh/$ZSH_VERSION/help/$word"
-  if [ -f $cmd ]; then
-    bat -lman <(echo "# $cmd") $cmd
+  cmd_help_file="/usr/share/zsh/$ZSH_VERSION/help/$word"
+  if [ -f $cmd_help_file ]; then
+    echo "$ cat $cmd_help_file"
+    bat -lman <(echo "# $cmd_help_file" | tail -n +2) $cmd_help_file
+    
+    section=$(cat "$cmd_help_file" |grep "See the section" | grep -oP "\`\K[^']+")
+    zsh_topic=$(cat "$cmd_help_file" |grep "See the section" | grep -oP "(?<=in )\w+")
+
+    if [[ -n "${zsh_topic}" ]]; then
+      echo; echo "$ man $zsh_topic"
+      man $zsh_topic | bat -l man
+    fi
+
   elif bash -c "help $word" 1>/dev/null 2>&1; then
     bat <(echo \$ help $word) <(bash -c "help $word")
   else
