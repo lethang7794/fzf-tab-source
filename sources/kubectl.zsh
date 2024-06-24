@@ -1,9 +1,6 @@
 # :fzf-tab:complete:(\\|*/|)kube(color|ctl):*
 
-debug
-
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
-echo level: $level
 
 # Function to parse kubectl explain output
 parse_kubectl_explain() {
@@ -40,7 +37,7 @@ parse_kubectl_explain() {
   }'
 }
 
-if [[ $level -eq 1 ]] && [[ $group = "completions" ]] || [[ $words =~ "kubecolor help " ]]; then
+if [[ $level -eq 1 ]] && [[ $group = "completions" ]] || [[ $words =~ "kube(ctl|color) help " ]]; then
 
   if bash -c "kubectl $word --help" >/dev/null 2>&1; then
     echo "$ kubectl $word --help"
