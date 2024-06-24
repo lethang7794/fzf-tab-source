@@ -15,8 +15,14 @@ case $group in
   elif bash -c "$word help" 1>/dev/null 2>&1; then
     echo "\$ $word help"
     bat -pl help <(eval "$word help")
+  fi
+  echo; echo \$ man $word
+  manpage=$(man $word 2>/dev/null)
+  if [[ $manpage == "" ]]; then
+    echo "No manual entry for $word"
   else
-    bat -lman <(echo \$ man $word) <(man $word 2>/dev/null)
+    echo $manpage | head -n 20 | bat -lman
+    echo; echo "For more details run 'man $word'"
   fi
   ;;
 'executable file')
