@@ -1,6 +1,6 @@
 # :fzf-tab:complete:-tilde-:
 case $group in
 user)
-  finger $word
+  finger $word | bat -pl bash
   ;;
 esac
