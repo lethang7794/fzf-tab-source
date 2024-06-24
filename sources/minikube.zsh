@@ -1,9 +1,9 @@
 # :fzf-tab:complete:(\\|*/|)minikube:*
 
-# debug
-
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
-# echo level: $level
+
+# Trim trailing whitespace
+word=$(echo $word | xargs)
 
 if [[ $group == "file" ]]; then
   less $word
@@ -21,7 +21,6 @@ if [[ $words == *"-" ]]; then
   else
     local prefix=$(echo "$words" | sed -E 's/( -| --)//g')
     echo "$ $prefix --help"
-    # eval "$prefix --help"
     eval "$prefix --help" | grep -A 1 -E -- "$pattern" | bat -l help
   fi
 
