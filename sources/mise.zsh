@@ -1,7 +1,7 @@
 # :fzf-tab:complete:mise:*
 
 # Skip the option
-if [[ $word == --* ]]; then
+if [[ $word == "-"* ]]; then
   return
 fi
 

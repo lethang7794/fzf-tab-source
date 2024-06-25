@@ -1,7 +1,7 @@
 # :fzf-tab:complete:((\\|*/|)docker):argument-1
 
 # Skip the options
-if [[ "$desc" =~ ^"-" ]]; then
+if [[ $word == "-"* ]]; then
   return
 fi
 

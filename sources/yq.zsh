@@ -1,7 +1,7 @@
 # :fzf-tab:complete:(\\|*/|)yq:*
 
 # Skip the options
-if [[ "${word}" == *"--"* ]]; then
+if [[ $word == "-"* ]]; then
   return
 elif [[ $group == "completions" ]]; then
   echo \$ yq $word --help

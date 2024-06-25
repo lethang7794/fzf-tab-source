@@ -47,6 +47,10 @@ kubectl_explain() {
   }'
 }
 
+if [[ $word == "-"* ]]; then
+  return
+fi
+
 if [[ $level -eq 1 ]] && [[ $group = "completions" ]] || [[ $words =~ "kube(ctl|color) help " ]]; then
   if bash -c "tldr kubectl-$word" 1>/dev/null 2>&1; then
     bat_bash "$ tldr kubectl-$word"

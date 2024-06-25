@@ -1,7 +1,7 @@
 # :fzf-tab:complete:(\\|*/|)podman:*
 
 # Skip the options
-if [[ "$desc" =~ ^"-" ]]; then
+if [[ $word == "-"* ]]; then
   return
 fi
 

@@ -5,6 +5,10 @@ local level=$(echo "$words" | tr -cd ' ' | wc -c)
 # Trim trailing whitespace
 word=$(echo $word | xargs)
 
+if [[ $word == "-"* ]]; then
+  return
+fi
+
 if [[ $group == "file" ]]; then
   less $word
   return
