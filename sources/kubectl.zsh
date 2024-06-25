@@ -2,7 +2,17 @@
 
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
 
-# Function to parse kubectl explain output
+# debug
+# echo "level: $level"
+
+bat_bash() {
+  echo $@ | bat -pl bash
+}
+bat_help() {
+  echo $@ | bat -pl help
+}
+
+# Parse kubectl explain output without fields
 kubectl_explain() {
   local resource_type=$1
 
@@ -37,13 +47,6 @@ kubectl_explain() {
   }'
 }
 
-bat_bash() {
-  echo $@ | bat -pl bash
-}
-bat_help() {
-  echo $@ | bat -pl help
-}
-
 if [[ $level -eq 1 ]] && [[ $group = "completions" ]] || [[ $words =~ "kube(ctl|color) help " ]]; then
   if bash -c "tldr kubectl-$word" 1>/dev/null 2>&1; then
     bat_bash "$ tldr kubectl-$word"
@@ -52,16 +55,16 @@ if [[ $level -eq 1 ]] && [[ $group = "completions" ]] || [[ $words =~ "kube(ctl|
 
   if bash -c "kubectl $word --help" >/dev/null 2>&1; then
     bat_help "$ kubectl $word --help"
-    kubectl $word --help | bat -lhelp
+    kubectl $word --help | bat -l help
   fi
 
   if bash -c "kubectl $word --help" >/dev/null 2>&1; then
     bat_help "$ kubectl $word --help"
-    kubectl $word --help | bat -lhelp
+    kubectl $word --help | bat -l help
   fi
 
   printf "\n$ man kubectl-%q\n" $word
-  man kubectl-$word | bat -lman
+  man kubectl-$word | bat -l man
 
   return
 fi
@@ -82,7 +85,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
         bat_bash "$ kubectl explain $word"
         kubectl explain $word | bat -l yaml
       else
-        bat_bash "$ kubectl explain $word "
+        bat_bash "$ kubectl explain $word"
         kubectl_explain $word | bat -l yaml
       fi
     fi
@@ -107,7 +110,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
   if [[ $words =~ "cordon|uncordon" ]]; then
 
-    bat_bash "$ kubectl get nodes/$word "
+    bat_bash "$ kubectl get nodes/$word"
     kubectl get nodes/$word | bat -l bash
 
     echo
@@ -175,11 +178,11 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
     if bash -c "kubectl certificate $word --help" >/dev/null 2>&1; then
       bat_bash "$ kubectl certificate $word --help"
-      kubectl certificate $word --help | bat -lhelp
+      kubectl certificate $word --help | bat -l help
     fi
 
     printf "\n\$ man kubectl-certificate-%q\n" $word
-    man kubectl-certificate-$word | bat -lman
+    man kubectl-certificate-$word | bat -l man
 
   fi
 
@@ -187,11 +190,11 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
     if bash -c "kubectl apply $word --help" >/dev/null 2>&1; then
       bat_bash "$ kubectl apply $word --help"
-      kubectl apply $word --help | bat -lhelp
+      kubectl apply $word --help | bat -l help
     fi
 
     printf "\n\$ man kubectl-apply-%q\n" $word
-    man kubectl-apply-$word | bat -lman
+    man kubectl-apply-$word | bat -l man
 
   fi
 
@@ -199,11 +202,11 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
     if bash -c "kubectl rollout $word --help" >/dev/null 2>&1; then
       bat_bash "$ kubectl rollout $word --help"
-      kubectl rollout $word --help | bat -lhelp
+      kubectl rollout $word --help | bat -l help
     fi
 
     printf "\n\$ man kubectl-rollout-%q\n" $word | bat -l bash
-    man kubectl-rollout-$word | bat -lman
+    man kubectl-rollout-$word | bat -l man
 
   fi
 
@@ -211,11 +214,11 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
     if bash -c "kubectl auth $word --help" >/dev/null 2>&1; then
       bat_bash "$ kubectl auth $word --help"
-      kubectl auth $word --help | bat -lhelp
+      kubectl auth $word --help | bat -l help
     fi
 
     printf "\n\$ man kubectl-auth-%q\n" $word | bat -l bash
-    man kubectl-auth-$word | bat -lman
+    man kubectl-auth-$word | bat -l man
 
   fi
 
@@ -229,11 +232,11 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
     if bash -c "kubectl config $word --help" >/dev/null 2>&1; then
       bat_bash "$ kubectl config $word --help"
-      kubectl config $word --help | bat -lhelp
+      kubectl config $word --help | bat -l help
     fi
 
     printf "\n\$ man kubectl-config-%q\n" $word
-    man kubectl-config-$word | bat -lman
+    man kubectl-config-$word | bat -l man
 
     return
   fi
@@ -242,11 +245,11 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
     if bash -c "kubectl create $word --help" >/dev/null 2>&1; then
       bat_bash "$ kubectl create $word --help"
-      kubectl create $word --help | bat -lhelp
+      kubectl create $word --help | bat -l help
     fi
 
     printf "\n\$ man kubectl-create-%q\n" $word
-    man kubectl-create-$word | bat -lman
+    man kubectl-create-$word | bat -l man
 
   fi
 
@@ -254,11 +257,11 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
     if bash -c "kubectl set $word --help" >/dev/null 2>&1; then
       bat_bash "$ kubectl set $word --help"
-      kubectl set $word --help | bat -lhelp
+      kubectl set $word --help | bat -l help
     fi
 
     printf "\n\$ man kubectl-set-%q\n" $word
-    man kubectl-set-$word | bat -lman
+    man kubectl-set-$word | bat -l man
 
   fi
 
@@ -290,13 +293,13 @@ fi
 if [[ $level -eq 3 ]] && [[ $group = "completions" ]]; then
   if [[ $words =~ " config " ]]; then
     if [[ $words =~ "context" ]]; then
-      echo \$ kubectl config get-contexts $word | bat -l bash
+      bat_bash "$ kubectl config get-contexts $word"
       kubectl config get-contexts $word | bat -l bash
     elif [[ $words =~ "cluster" ]]; then
-      echo \$ kubectl config get-clusters $word | bat -l bash
+      bat_bash "$ kubectl config get-clusters $word"
       kubectl config get-clusters $word | bat -l bash
     elif [[ $words =~ "user" ]]; then
-      echo \$ kubectl config get-users $word | bat -l bash
+      bat_bash "$ kubectl config get-users $word"
       kubectl config get-users $word | bat -l bash
     fi
   fi
@@ -309,7 +312,7 @@ if [[ $level -eq 3 ]] && [[ $group = "completions" ]]; then
     kubectl get $resourceType $word -o wide | bat -l bash
 
     echo
-    bat_bash "$ kubectl explain $resourceType" | bat -l bash
+    bat_bash "$ kubectl explain $resourceType"
     kubectl_explain $resourceType | bat -l yaml
 
     bat_bash "$ kubectl get $resourceType $word -o yaml"
@@ -357,15 +360,15 @@ if [[ $level -eq 3 ]] && [[ $group = "completions" ]]; then
   fi
 
   if [[ $words =~ " taint node " ]]; then
-    bat_bash "$ kubectl get nodes/$word "
+    bat_bash "$ kubectl get nodes/$word"
     kubectl get nodes/$word | bat -l bash
 
     echo
-    bat_bash "$ kubectl describe nodes/$word "
+    bat_bash "$ kubectl describe nodes/$word"
     kubectl describe nodes/$word | bat -l yaml
 
     echo
-    bat_bash "$ kubectl explain node "
+    bat_bash "$ kubectl explain node"
     kubectl explain node | bat -l help
   fi
 
