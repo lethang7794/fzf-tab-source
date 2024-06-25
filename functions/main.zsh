@@ -37,21 +37,26 @@ tmp_dir=${TMPPREFIX:-/tmp/zsh}-fzf-tab-$USER
 export CLICOLOR_FORCE=1
 export SYSTEMD_COLORS=1
 
+# The level of the current context/word
+local level=$(echo "$words" | tr -cd ' ' | wc -c)
+
 # Call debug in source file to get debug information
 function debug {
-  echo $0:
+  echo fzf-tab-source-debug:
   echo "---------------------"
-  echo "ctx:      |$ctx|" 
-  echo "src:      |$src|" 
-  echo "----"
-  echo "desc:     |$desc|"
-  echo "word:     |$word|"
-  echo "group:    |$group|"
-  echo "realpath: |$realpath|"
-  echo "words:    |$words|"
+  echo "preview-ctx: |$ctx|" 
+  echo "preview-src: |$src|" 
+  echo "-------------"
+  echo "Preview variables:"
+  echo "desc:        |$desc|"
+  echo "word:        |$word|"
+  echo "group:       |$group|"
+  echo "realpath:    |$realpath|"
+  echo "words:       |$words|"
+  echo "level:       |$level|"
   echo "---------------------"
   echo "For more information, see https://github.com/Aloxaf/fzf-tab/wiki/Preview"
-  echo
+  echo "====================="
 }
 
 . $src
