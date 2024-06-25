@@ -38,6 +38,15 @@ kubectl_explain() {
 }
 
 if [[ $level -eq 1 ]] && [[ $group = "completions" ]] || [[ $words =~ "kube(ctl|color) help " ]]; then
+  if bash -c "tldr kubectl-$word" 1>/dev/null 2>&1; then
+    echo "\$ tldr kubectl-$word"
+    tldr --color=always --quiet kubectl-$word | tail -n +3
+  fi
+
+  if bash -c "kubectl $word --help" >/dev/null 2>&1; then
+    echo "$ kubectl $word --help"
+    kubectl $word --help | bat -lhelp
+  fi
 
   if bash -c "kubectl $word --help" >/dev/null 2>&1; then
     echo "$ kubectl $word --help"
