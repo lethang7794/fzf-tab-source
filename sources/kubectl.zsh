@@ -3,7 +3,7 @@
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
 
 # Function to parse kubectl explain output
-parse_kubectl_explain() {
+kubectl_explain() {
   local resource_type=$1
 
   # Capture the output of 'kubectl explain <resource_type>'
@@ -60,8 +60,15 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
       echo "$ kubectl get $word " | bat -l bash
       kubectl get $word | bat -l bash
       echo
-      echo "$ kubectl explain $word " | bat -l bash
-      parse_kubectl_explain $word | bat -l yaml
+
+      # Show the fields for describe
+      if [[ $words =~ "describe" ]]; then
+        echo "$ kubectl explain $word" | bat -l bash
+        kubectl explain $word | bat -l yaml
+      else
+        echo "$ kubectl explain $word " | bat -l bash
+        kubectl_explain $word | bat -l yaml
+      fi
     fi
 
     if [ $isResource ]; then
@@ -71,7 +78,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
       kubectl get $word -o wide | bat -l bash
       echo
       echo "$ kubectl explain $type" | bat -l bash
-      kubectl explain $type | bat -l yaml
+      kubectl_explain $type | bat -l yaml
 
       echo "$ kubectl get $word -o yaml" | bat -l bash
       kubectl get $word -o yaml | bat -l yaml
@@ -116,7 +123,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
       echo
       echo "$ kubectl explain pods" | bat -l bash
-      parse_kubectl_explain pods | bat -l help
+      kubectl_explain pods | bat -l help
 
       echo "$ kubectl describe pods $item"
       kubectl describe pods $item | bat -l bash
@@ -128,7 +135,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
       echo
       echo "$ kubectl explain $item"
-      parse_kubectl_explain $item | bat -l help
+      kubectl_explain $item | bat -l help
     fi
 
     if [ $isResource ]; then
@@ -141,7 +148,7 @@ if [[ $level -eq 2 ]] && [[ $group = "completions" ]]; then
 
       echo
       echo "$ kubectl explain $resourceType" | bat -l bash
-      parse_kubectl_explain $resourceType | bat -l help
+      kubectl_explain $resourceType | bat -l help
 
       echo "$ kubectl describe $word" | bat -l bash
       kubectl describe $word | bat -l bash
@@ -280,16 +287,15 @@ if [[ $level -eq 3 ]] && [[ $group = "completions" ]]; then
 
   if [[ $words =~ " (annotate|delete|edit|get|describe|expose|label|patch) " ]]; then
     local resourceType=$(echo $words | awk '{print $3}')
-    echo resourceType: $resourceType
+    # echo resourceType: $resourceType
 
     echo "$ kubectl get $resourceType $word -o wide"
     kubectl get $resourceType $word -o wide | bat -l bash
 
     echo
     echo "$ kubectl explain $resourceType" | bat -l bash
-    kubectl explain $resourceType | bat -l yaml
+    kubectl_explain $resourceType | bat -l yaml
 
-    echo
     echo "$ kubectl get $resourceType $word -o yaml"
     kubectl get $resourceType $word -o yaml | bat -l yaml
 
@@ -315,7 +321,7 @@ if [[ $level -eq 3 ]] && [[ $group = "completions" ]]; then
       kubectl get $resourceType | bat -l bash
       echo
       echo "$ kubectl explain $resourceType" | bat -l bash
-      parse_kubectl_explain $resourceType | bat -l yaml
+      kubectl_explain $resourceType | bat -l yaml
     else
       echo "$ kubectl get $resourceType $resource -o wide" | bat -l bash
       kubectl get $resourceType $resource -o wide | bat -l bash
