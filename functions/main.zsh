@@ -42,6 +42,7 @@ local level=$(echo "$words" | tr -cd ' ' | wc -c)
 
 # Call debug in source file to get debug information
 function debug {
+  echo "====================="
   echo fzf-tab-source-debug:
   echo "---------------------"
   echo "preview-ctx: |$ctx|" 

@@ -2,9 +2,6 @@
 
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
 
-# debug
-# echo "level: $level"
-
 bat_bash() {
   echo $@ | bat -pl bash
 }
