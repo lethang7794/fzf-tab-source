@@ -1,7 +1,5 @@
 # :fzf-tab:complete:((\\|*/|)aws):*
 
-# debug
-
 local prefix="${words% *}"
 local cmd="$prefix $word"
 
@@ -28,7 +26,6 @@ local global_options=(
 
 if [[ $word == "-"* ]]; then
   if [[ $global_options[*] =~ "$word" ]]; then
-    # printf "%s: %s %s\n\n" $(bat -pl bash <(echo $word)) "global option of" $(bat -pl bash <(echo aws))
 
     echo "\$ $prefix help"
     aws help | head -n 150 | rg -A10 -- "$word"
@@ -41,7 +38,6 @@ if [[ $word == "-"* ]]; then
       echo "aws help | less --pattern=$word"
     fi
   else
-    # printf "%s: %s '%s' %s\n\n" $(bat -pl bash <(echo $word)) "option of" $prefix
     cmd_help=$(eval "$prefix help")
     options_line=$(echo $cmd_help | rg --stop-on-nonmatch --color=never "OPTIONS" --line-number | awk -F ':' '{print $1}')
 
