@@ -25,9 +25,14 @@ local global_options=(
 )
 
 if [[ $word == "-"* ]]; then
+  # Preview only works for the first option, because it's a hard to parse the command without options
+  if [[ $prefix == *"--"* ]]; then
+    return
+  fi
+
   if [[ $global_options[*] =~ "$word" ]]; then
 
-    echo "\$ $prefix help"
+    echo "\$ aws help"
     aws help | head -n 150 | rg -A10 -- "$word"
 
     printf "\n%s:\n  " "For more information, run"
