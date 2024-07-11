@@ -5,6 +5,9 @@ if [[ $word == "-"* ]]; then
   return
 fi
 
+# Strip trailing whitespace
+local word="${word% *}"
+
 if [[ $words == "podman " ]]; then
   if bash -c "tldr podman $word" >/dev/null 2>&1; then
     echo "$ tldr podman $word"
