@@ -12,6 +12,11 @@ fi
 
 # Sub-command, e.g. terraform apply
 if [ $level = 1 ]; then
+  if bash -c "tldr terraform $word" >/dev/null 2>&1; then
+    echo "$ tldr terraform $word"
+    tldr --color=always terraform $word | tail -n +3
+  fi
+
   echo "$ terraform $word --help" | bat -pl bash
   terraform $word --help | bat -l help
 fi
