@@ -1,41 +1,37 @@
 # :fzf-tab:complete:mise:*
 
+local level=$(echo "$words" | tr -cd ' ' | wc -c)
+
+# Trim trailing whitespace
+local word=$(echo $word | xargs)
+
 # Skip the option
 if [[ $word == "-"* ]]; then
   return
 fi
 
-# Workaround: Detect mise alias CMD
-if [[ $desc == *alias* && ! $desc == *"Manage aliases" ]]; then
-  echo "$ mise alias $word --help"
-  mise alias $word --help | bat -pl help
-  return
+# Level 1 command, e.g. mise install
+if [ $level = 1 ]; then
+  if [[ $word =~ "help" ]]; then
+    echo "$ mise $cmd $word" | bat -pl bash
+    mise $cmd $word | bat -l help
+  else
+    echo "$ mise $word --help"
+    mise $word --help
+  fi
 fi
 
-# Workaround: Detect mise backends CMD
-if [[ $desc == *backend* && ! $desc == *"Manage backends" ]]; then
-  echo "$ mise backends $word --help"
-  mise backends $word --help | bat -pl help
-  return
-fi
+# Level 2, e.g. mise backends
+if [ $level = 2 ]; then
+  local cmd=$(echo $words | awk '{print $2}')
 
-# Workaround: Detect mise cache CMD
-if [[ $desc == *cache* && ! $desc == *"Manage the mise cache" ]]; then
-  echo "$ mise cache $word --help"
-  mise cache $word --help | bat -pl help
-  return
-fi
-
-# Workaround: Detect mise config CMD
-
-# Workaround: Detect mise plugins
-if [[ $desc == *plugin* && ! $desc == *"Manage plugins" && ! $desc == *"latest"* ]]; then
-  echo "$ mise plugins $word --help"
-  mise plugins $word --help | bat -pl help
-  return
-fi
-
-if bash -c "mise $word --help" 1>/dev/null 2>&1; then
-  echo "$ mise $word --help"
-  mise $word --help | bat -pl help
+  if [[ $words =~ " (alias|backends|cache|config|plugins) " ]]; then
+    if [[ $word =~ "help" ]]; then
+      echo "$ mise $cmd $word" | bat -pl bash
+      mise $cmd $word | bat -l help
+    else
+      echo "$ mise $cmd $word --help" | bat -pl bash
+      mise $cmd $word --help | bat -l help
+    fi
+  fi
 fi
