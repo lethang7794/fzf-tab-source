@@ -6,6 +6,9 @@
 #   ;;
 # esac
 
+# Trim trailing whitespace
+local word=$(echo $word | xargs)
+
 if [[ "${word}" == *"."* ]]; then
   flatpak info $word | bat -pl yaml
 else
