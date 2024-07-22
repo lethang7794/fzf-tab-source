@@ -10,6 +10,20 @@ if [[ $word == "-"* ]]; then
   return
 fi
 
+# Show parent's help for help sub-command
+local prefix="${words% *}"
+if [[ $word =~ "help" ]]; then
+  if bash -c "$prefix $word" >/dev/null 2>&1; then
+    echo "$ $prefix $word" | bat -pl bash
+    eval $prefix $word | bat -l help
+  fi
+  if bash -c "$prefix --help" >/dev/null 2>&1; then
+    echo "$ $prefix --help" | bat -pl bash
+    eval $prefix --help | bat -l help
+  fi
+  return
+fi
+
 # Sub-command, e.g. tofu apply
 if [ $level = 1 ]; then
   if bash -c "tldr tofu $word" >/dev/null 2>&1; then

@@ -10,6 +10,7 @@ if [[ $word == "-"* ]]; then
   return
 fi
 
+# Show parent's help for help sub-command
 local prefix="${words% *}"
 if [[ $word =~ "help" ]]; then
   if bash -c "$prefix $word" >/dev/null 2>&1; then
