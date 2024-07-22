@@ -1,22 +1,26 @@
 # :fzf-tab:complete:(-command-:|command:option-(v|V)-rest)
 
+echo_bash() {
+  echo $@ | bat -pl bash
+}
+
 case $group in
 'external command')
   if bash -c "tldr $word" 1>/dev/null 2>&1; then
-    echo "\$ tldr $word"
-    cat <(eval "tldr --color=always --quiet $word | tail -n +3")
+    echo_bash "\$ tldr $word"
+    eval "tldr --color=always --quiet $word" | tail -n +3
   fi
   if bash -c "$word --help" 1>/dev/null 2>&1; then
-    echo "\$ $word --help"
-    bat -pl help <(eval "$word --help")
+    echo_bash "\$ $word --help"
+    eval "$word --help" | bat -pl help
   elif bash -c "$word -h" 1>/dev/null 2>&1; then
-    echo "\$ $word -h"
-    bat -pl help  <(eval "$word -h")
+    echo_bash "\$ $word -h"
+    eval "$word -h" | bat -pl help
   elif bash -c "$word help" 1>/dev/null 2>&1; then
-    echo "\$ $word help"
-    bat -pl help <(eval "$word help")
+    echo_bash "\$ $word help"
+    eval "$word help" | bat -pl help
   fi
-  echo; echo \$ man $word
+  echo; echo_bash \$ man $word
   manpage=$(man $word 2>/dev/null)
   if [[ $manpage == "" ]]; then
     echo "No manual entry for $word"
@@ -34,8 +38,8 @@ case $group in
     echo "$ cat $cmd_help_file"
     bat -lman <(echo "# $cmd_help_file" | tail -n +2) $cmd_help_file
     
-    section=$(cat "$cmd_help_file" |grep "See the section" | grep -oP "\`\K[^']+")
-    zsh_topic=$(cat "$cmd_help_file" |grep "See the section" | grep -oP "(?<=in )\w+")
+    section=$(cat "$cmd_help_file" | grep "See the section" | grep -oP "\`\K[^']+")
+    zsh_topic=$(cat "$cmd_help_file" | grep "See the section" | grep -oP "(?<=in )\w+")
 
     if [[ -n "${zsh_topic}" ]]; then
       echo; echo "$ man $zsh_topic"
@@ -43,9 +47,9 @@ case $group in
     fi
 
   elif bash -c "help $word" 1>/dev/null 2>&1; then
-    bat <(echo \$ help $word) <(bash -c "help $word")
+    bat <(echo_bash \$ help $word) <(bash -c "help $word")
   else
-    bat -lman <(echo \$ man $word) <(run-help $word)
+    bat -lman <(echo_bash \$ man $word) <(run-help $word)
   fi
   ;;
 parameter)
