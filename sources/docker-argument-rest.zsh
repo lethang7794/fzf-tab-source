@@ -1,5 +1,5 @@
 # :fzf-tab:complete:docker-:argument-rest
-echo ':fzf-tab:complete:docker-:argument-rest'
+# echo ':fzf-tab:complete:docker-:argument-rest'
 
 if [[ $group == "docker image command" ]]; then
   echo \$ docker image $word --help

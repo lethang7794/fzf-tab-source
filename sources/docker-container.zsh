@@ -1,5 +1,5 @@
 # :fzf-tab:complete:docker-container:*
-echo ':fzf-tab:complete:docker-container:*'
+# echo ':fzf-tab:complete:docker-container:*'
 
 if [[ $group == "docker container command" ]]; then
 

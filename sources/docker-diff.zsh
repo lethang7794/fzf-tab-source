@@ -1,5 +1,5 @@
 # :fzf-tab:complete:docker-diff:*
-echo ':fzf-tab:complete:docker-diff:*'
+# echo ':fzf-tab:complete:docker-diff:*'
 
 if [[ "${group}" == "containers" ]]; then
   echo \$ docker diff $word

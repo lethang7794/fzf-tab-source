@@ -1,5 +1,5 @@
 # :fzf-tab:complete:docker-(run|images):argument-1
-echo ':fzf-tab:complete:docker-(run|images):argument-1'
+# echo ':fzf-tab:complete:docker-(run|images):argument-1'
 
 if [[ $group == "repositories" ]]; then
   echo \$ docker images $word

@@ -1,5 +1,5 @@
 # :fzf-tab:complete:docker-*:argument-1
-echo ':fzf-tab:complete:docker-*:argument-1'
+# echo ':fzf-tab:complete:docker-*:argument-1'
 
 if [[ $group == "docker command" ]]; then
 

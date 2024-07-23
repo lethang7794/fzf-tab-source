@@ -1,5 +1,4 @@
 # :fzf-tab:complete:docker-context:*
-echo ':fzf-tab:complete:docker-context:*'
 
 if bash -c "tldr docker context $word" >/dev/null 2>&1; then
   echo "$ tldr docker context $word"
@@ -11,4 +10,4 @@ if bash -c "docker context $word --help" >/dev/null 2>&1; then
   docker context $word --help | bat -lhelp
 fi
 
-debug
+# debug
