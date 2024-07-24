@@ -1,4 +1,4 @@
-# :fzf-tab:complete:docker-*:argument-1
+# :fzf-tab:complete:docker-*:*
 # echo ':fzf-tab:complete:docker-*:argument-1'
 
 if [[ $group == "docker command" ]]; then
@@ -33,13 +33,24 @@ elif [[ $group == "images" ]]; then
   docker image inspect $word | jq --color-output
 
 elif [[ $group == "containers" ]]; then
+  local inspect_output=$(docker container inspect $word)
+  local container_status=$(echo $inspect_output | jq '.[0].State.Status')
+  echo
+
+  if [[ $container_status == "\"running\"" ]]; then
+    echo \$ docker container top $word
+    docker container top $word | bat -pl bash
+  fi
+
   echo \$ docker container inspect $word
-  docker container inspect $word | jq --color-output
+  echo $inspect_output | jq --color-output
 
 elif [[ $group == "context" ]]; then
   echo \$ docker context inspect $word
   docker context inspect $word | jq --color-output
 
 else
-  debug
+  # debug
 fi
+
+debug
