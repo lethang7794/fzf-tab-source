@@ -26,7 +26,8 @@ case $group in
     echo "No manual entry for $word"
   else
     echo $manpage | head -n 20 | bat -lman
-    echo; echo "For more details run 'man $word'"
+    printf "\n(...)\n\n"
+    echo "For more details run 'man $word'"
   fi
   ;;
 'executable file')
