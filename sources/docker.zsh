@@ -111,19 +111,31 @@ if [[ $prefix =~ "docker diff|docker container (diff|commit)" ]]; then
   return
 fi
 
+if [[ $prefix =~ "docker(| container) port" ]]; then
+  echo_bash "$ docker container port $word"
+  docker container port $word
+  return
+fi
+
+if [[ $prefix =~ "docker(| container) top" ]]; then
+  echo_bash "$ docker container top $word -eo comm,size,%cpu,pid,user,command"
+  docker container top $word -eo comm,size,%cpu,pid,user,command | bat -pl bash
+  return
+fi
+
 if [[ $words =~ "docker container " ]] && ! [[ $words =~ " (cp)" ]]; then
   if [[ $words =~ " (stats)" ]]; then
     echo_bash "$ $prefix $word"
     eval "$prefix $word" | bat -pl bash
   fi
 
-  if [[ $words =~ " (attach|inspect|rm|start|stop|rename|top|unpause|update)" ]]; then
+  if [[ $words =~ " (attach|inspect|rm|start|stop|rename|unpause|update)" ]]; then
     local inspect_output=$(docker container inspect $word)
     local container_status=$(echo $inspect_output | jq '.[0].State.Status')
 
     if [[ $container_status == "\"running\"" ]]; then
-      echo "$ docker container top $word"
-      docker container top $word | bat -pl bash
+      echo_bash "$ docker container top $word -eo comm,size,%cpu,pid,user,command"
+      docker container top $word -eo comm,size,%cpu,pid,user,command | bat -pl bash
       echo
     fi
 
