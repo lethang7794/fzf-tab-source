@@ -28,8 +28,8 @@ if [ $level = 2 ]; then
   local cmd=$(echo $words | awk '{print $2}')
 
   if [[ $words =~ " (info|install|reinstall|remove|upgrade|downgrade|list|swap) " ]]; then
-    echo "$ dnf5 -C $cmd $word" | bat -pl bash
-    dnf5 -C $cmd $word | bat -pl yaml
+    echo "$ dnf5 -C info $word" | bat -pl bash
+    dnf5 -C info $word | bat -pl yaml
   fi
 
 fi
