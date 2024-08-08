@@ -1,5 +1,4 @@
 # :fzf-tab:complete:(docker|docker*):*
-# echo ':fzf-tab:complete:docker-*:argument-1'
 
 function echo_bash() {
   echo $@ | bat -pl bash

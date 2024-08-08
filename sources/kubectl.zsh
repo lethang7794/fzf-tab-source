@@ -1,6 +1,7 @@
 # :fzf-tab:complete:(\\|*/|)kube(color|ctl):*
 
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
+local prefix="${words% *}"
 
 bat_bash() {
   echo $@ | bat -pl bash
@@ -44,7 +45,14 @@ kubectl_explain() {
   }'
 }
 
+# Show command's help for --help option
 if [[ $word == "-"* ]]; then
+  if [[ $word == "--help" ]]; then
+    if bash -c "$prefix --help" >/dev/null 2>&1; then
+      bat_bash "$ $prefix --help"
+      eval $prefix --help | bat -l help
+    fi
+  fi
   return
 fi
 
