@@ -20,6 +20,12 @@ if [[ $word =~ "help" ]]; then
   return
 fi
 
+local file=${realpath#--*=}
+if [[ $group == "file" ]]; then
+  less $file
+  return
+fi
+
 # Sub-command, e.g. pnpm install
 if [ $level = 1 ]; then
   if bash -c "tldr pnpm $word" >/dev/null 2>&1; then
