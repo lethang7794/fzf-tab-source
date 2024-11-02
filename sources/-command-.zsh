@@ -4,11 +4,23 @@ echo_bash() {
   echo $@ | bat -pl bash
 }
 
+tldr-similar() {
+  local word="$1"
+  local raw=$(tldr --raw --quiet $word)
+  local seeAlsoOrSimilarCount=$(echo $raw | grep -c -E 'See also|Similar to')
+  if (( seeAlsoOrSimilarCount > 0  )); then
+    local seeAlsoOrSimilar=$(echo $raw | grep -a -E 'See also|Similar to')
+    # echo $seeAlsoOrSimilar | grep -oP '`([^`]+)`' | tr -d '`' | xargs -I{} tldr --color=always {} | tail -n +2 | head -n 6 | sed 's/^/  /'
+    echo $seeAlsoOrSimilar | grep -oP '`([^`]+)`' | sed -E 's/tldr |`//g' | xargs -I{} sh -c 'tldr --color=always --quiet {} | tail -n +2 | head -n 5 | gum style --border double --padding "1 2"'
+  fi
+}
+
 case $group in
 'external command')
   if bash -c "tldr $word" 1>/dev/null 2>&1; then
     echo_bash "\$ tldr $word"
     eval "tldr --color=always --quiet $word" | tail -n +3
+    tldr-similar "$word"
   fi
   if bash -c "$word --help" 1>/dev/null 2>&1; then
     echo_bash "\$ $word --help"
