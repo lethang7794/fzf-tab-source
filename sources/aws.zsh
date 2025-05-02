@@ -1,6 +1,9 @@
 # :fzf-tab:complete:((\\|*/|)aws):*
 
 local prefix="${words% *}"
+
+# Trim trailing whitespace
+local word=$(echo $word | xargs)
 local cmd="$prefix $word"
 
 local global_options=(
