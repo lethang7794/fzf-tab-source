@@ -1,4 +1,4 @@
-# :fzf-tab:complete:(\\|*/|)cdk:*
+# :fzf-tab:complete:(\\|*/|)sam:*
 
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
 
@@ -24,13 +24,24 @@ if [[ $word =~ "help" ]]; then
   return
 fi
 
-# Sub-command, e.g. cdk deploy
+# Sub-command, e.g. sam install
 if [ $level = 1 ]; then
-  if bash -c "tldr cdk $word" >/dev/null 2>&1; then
-    echo "$ tldr cdk $word"
-    tldr --color=always cdk $word | tail -n +3
+  if bash -c "tldr sam $word" >/dev/null 2>&1; then
+    echo "$ tldr sam $word"
+    tldr --color=always sam $word | tail -n +3
   fi
 
-  echo "$ cdk $word --help" | bat -pl bash
-  cdk $word --help | bat -l help
+  echo "$ sam $word --help" | bat -pl bash
+  sam $word --help | bat -l help
+fi
+
+# Sub-command with nested sub-command, e.g. sam metadata functions
+if [ $level = 2 ]; then
+  local cmd=$(echo $words | awk '{print $2}')
+
+  if [[ $words =~ " (list|local|pipeline|remote) " ]]; then
+    echo "$ sam $cmd $word --help" | bat -pl bash
+    sam $cmd $word --help | bat -pl help
+  fi
+
 fi
