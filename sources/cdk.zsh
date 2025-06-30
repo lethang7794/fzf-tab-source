@@ -2,11 +2,44 @@
 
 local level=$(echo "$words" | tr -cd ' ' | wc -c)
 
+local prefix="${words% *}"
+
 # Trim trailing whitespace
 local word=$(echo $word | xargs)
+local cmd="$prefix $word"
 
-# Skip preview for the options
+local global_options=(
+
+)
+
 if [[ $word == "-"* ]]; then
+  # Preview only works for the first option, because it's a hard to parse the command without options
+  if [[ $prefix == *"--"* ]]; then
+    return
+  fi
+
+  if [[ $global_options[*] =~ "$word" ]]; then
+
+    echo "\$ cdk help"
+    echo "\$word: $word"
+    cdk help | head -n 150 | rg -A10 -- "$word"
+
+    printf "\n%s:\n  " "For more information, run"
+    echo "$prefix help | less --pattern=$word"
+
+    if [[ $prefix != cdk ]]; then
+      printf "or:\n  "
+      echo "cdk help | less --pattern=$word"
+    fi
+  else
+    cmd_help=$(eval "$prefix help")
+    echo "\$ $prefix help"
+    echo $cmd_help | rg -A10 -- "$word"
+
+    printf "\n%s:\n  " "For more information, run"
+    echo "$prefix help | less --pattern=$word" | bat -pl bash
+  fi
+
   return
 fi
 
